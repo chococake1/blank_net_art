@@ -6,8 +6,15 @@ cnv.width = innerWidth
 cnv.height = innerHeight
 
 const ctx = cnv.getContext (`2d`)
-ctx.fillStyle = `turquoise`
-ctx.fillRect (0, 0, innerWidth, innerHeight)
+
+const draw_frame = () => {
+   ctx.fillStyle = `turquoise`
+   ctx.fillRect (0, 0, innerWidth, innerHeight)
+
+   requestAnimationFrame (draw_frame)
+}
+
+draw_frame ()
 
 document.onresize = () => {
    cnv.width = innerWidth
