@@ -16,7 +16,7 @@ const draw_frame = () => {
 
 draw_frame ()
 
-document.onresize = () => {
+window.onresize = () => {
    console.log (`resize!`)
    cnv.width = innerWidth
    cnv.height = innerHeight   
