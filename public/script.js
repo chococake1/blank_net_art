@@ -8,3 +8,8 @@ cnv.height = innerHeight
 const ctx = cnv.getContext (`2d`)
 ctx.fillStyle = `turquoise`
 ctx.fillRect (0, 0, innerWidth, innerHeight)
+
+document.onresize = () => {
+   cnv.width = innerWidth
+   cnv.height = innerHeight   
+}
