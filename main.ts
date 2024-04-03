@@ -7,3 +7,5 @@ const serveFiles = (req: Request) => staticFiles ('public') ({
 })
 
 serve (req => serveFiles (req), { addr: ':80' })
+
+console.log (`Listening on http://localhost:80/`)
