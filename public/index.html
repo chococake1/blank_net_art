@@ -5,6 +5,32 @@
 
 <body>
     test
-   <canvas id="cnv_element"></canvas>
-   <script src="script.js"></script>
+   <canvas id="example_canvas"></canvas>
+
+<script type="module">
+    const cnv = document.getElementById (`example_canvas`)
+    cnv.width = cnv.parentNode.scrollWidth
+    cnv.height = cnv.width * 9 / 16
+
+    const ctx = cnv.getContext (`2d`)
+
+    let x_pos = -100
+
+    const draw_frame = () => {
+
+        ctx.fillStyle = `turquoise`
+        ctx.fillRect (0, 0, cnv.width, cnv.height)
+        
+        ctx.fillStyle = `hotpink`
+        ctx.fillRect (x_pos, cnv.height / 2 - 50, 100, 100)
+
+        x_pos += 1
+
+        if (x_pos > cnv.width) x_pos = -100
+
+        requestAnimationFrame (draw_frame)
+    }
+
+    draw_frame ()
+</script>
 </body>
