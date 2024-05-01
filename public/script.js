@@ -21,76 +21,35 @@ window.onresize = () => {
    cnv.height = innerHeight   
 }
 
-    // get and format canvas
-    const cnv = document.getElementById ('fractal_tree_0')
+<canvas id="recursive_squares"></canvas>
+
+<script type="module">
+    const cnv = document.getElementById (`recursive_squares`)
     cnv.width = cnv.parentNode.scrollWidth
-    cnv.height = cnv.width * 9 / 16
+    cnv.height = cnv.width
+    
+    const ctx = cnv.getContext (`2d`)
 
-    // get canvas context
-    const ctx = cnv.getContext ('2d')
+    function rand_col () {
+        return `hsl(${ Math.random () * 360 }, 100%, 66%)`
+    }
 
-    // this is the recursive function that will draw the tree
-    // it accepts three arguments:
-    // base: vector describing the starting position
-    // stem: vector describing the new line
-    // generation: integer limiting the number of recursions
-    function tree (base, stem, generation) {
+    function draw_square (size) {
+        const x = (cnv.width - size) / 2
+        const y = (cnv.height - size) / 2
 
-        // start with the base position
-        // we want to tranform it, so we make a copy
-        const end = base.clone ()
+        ctx.fillStyle = rand_col ()
+        ctx.fillRect (x, y, size, size)
+    }
 
-        // add the stem to the start position
-        end.add (stem)
+    function draw_squares (start_size) {
+        draw_square (start_size)
 
-        // draw the line from the start point
-        // to the end point
-        ctx.beginPath ()
-        ctx.moveTo (base.x, base.y)
-        ctx.lineTo (end.x, end.y)
-        ctx.stroke ()
-
-        // if generations is still positive
-        if (generation > 0) {
-
-            // clone the stem
-            const L_stem = stem.clone ()
-
-            // rotate it anti-clockwise
-            L_stem.rotate (-TAU / 7)
-
-            // reduce the length
-            L_stem.mult (0.6)
-
-            // clone the stem again
-            const R_stem = stem.clone ()
-
-            // rotate this one clockwise
-            R_stem.rotate (TAU / 7)
-
-            // reduce its length
-            R_stem.mult (0.6)
-
-            // decrease generation by 1
-            const next_gen = generation - 1
-
-            // recursively call tree twice, 
-            // with end as the new base
-            // L_stem & R_stem as the new stems
-            // and next_gen as the new generation
-            tree (end, L_stem, next_gen)
-            tree (end, R_stem, next_gen)
+        if (start_size > 0) {
+            draw_squares (start_size - 20)
         }
     }
 
-    // new vector defining the starting point of our tree
-    const seed = new Vector (cnv.width / 2, cnv.height)
+    draw_squares (cnv.height)
 
-    // new vector defining the first stem
-    // ie. 150 pixels straight up
-    const shoot = new Vector (0, -150)
-
-    // pass seed in as the base argument
-    // shoot as the stem argument
-    // and 7, denoting that we want 7 recursions
-    tree (seed, shoot, 7)
+</script>
