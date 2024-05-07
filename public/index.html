@@ -37,4 +37,16 @@
     draw_squares (cnv.height)
 
 </script>
+
+    <script>
+function changeColor() {
+    var square = document.getElementById("colorSquare");
+    var randomColor = '#' + Math.floor(Math.random()*16777215).toString(16); // Generates a random hex color
+    square.style.backgroundColor = randomColor;
+}
+
+// Change color every 1 second (1000 milliseconds)
+setInterval(changeColor, 1000);
+</script>
+    
 </body>
