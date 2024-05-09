@@ -22,9 +22,21 @@ function changeColor() {
     var square = document.getElementById("colorSquare");
     var randomColor = '#' + Math.floor(Math.random()*16777215).toString(16); // Generates a random hex color
     square.style.backgroundColor = randomColor;
+
+    // Get viewport dimensions
+    var viewportWidth = window.innerWidth;
+    var viewportHeight = window.innerHeight;
+
+    // Generate random coordinates within the viewport
+    var randomX = Math.floor(Math.random() * (viewportWidth - 200)); // Subtracting square width
+    var randomY = Math.floor(Math.random() * (viewportHeight - 200)); // Subtracting square height
+
+    // Set square position
+    square.style.left = randomX + 'px';
+    square.style.top = randomY + 'px';
 }
 
-// Change color every 1 second (1000 milliseconds)
+// Change color and position every 1 second (1000 milliseconds)
 setInterval(changeColor, 1000);
 </script>
     
