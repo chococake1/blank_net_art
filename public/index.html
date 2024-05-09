@@ -18,61 +18,7 @@
 <div id="colorSquare"></div>
 
 <script type="module">
-function changeColorAndMove() {
-    var square = document.getElementById("colorSquare");
-    var randomColor = '#' + Math.floor(Math.random()*16777215).toString(16); // Generates a random hex color
-    square.style.backgroundColor = randomColor;
 
-    // Get viewport dimensions
-    var viewportWidth = window.innerWidth;
-    var viewportHeight = window.innerHeight;
-
-    // Generate random coordinates within the viewport
-    var randomX = Math.floor(Math.random() * (viewportWidth - 200)); // Subtracting square width
-    var randomY = Math.floor(Math.random() * (viewportHeight - 200)); // Subtracting square height
-
-    // Set square position
-    square.style.left = randomX + 'px';
-    square.style.top = randomY + 'px';
-
-    // Generate random velocity for x and y directions
-    var vx = Math.random() * 10 - 5; // Random horizontal velocity between -5 and 5
-    var vy = Math.random() * 10 - 5; // Random vertical velocity between -5 and 5
-
-    // Update square position continuously
-    function moveSquare() {
-        // Get current square position
-        var currentX = parseFloat(square.style.left);
-        var currentY = parseFloat(square.style.top);
-
-        // Calculate new position
-        var newX = currentX + vx;
-        var newY = currentY + vy;
-
-        // Check if the square hits the boundaries
-        if (newX < 0 || newX + 200 > viewportWidth) {
-            vx = -vx; // Reverse horizontal velocity
-        }
-        if (newY < 0 || newY + 200 > viewportHeight) {
-            vy = -vy; // Reverse vertical velocity
-        }
-
-        // Update square position
-        square.style.left = newX + 'px';
-        square.style.top = newY + 'px';
-    }
-
-    // Move the square every 50 milliseconds
-    var moveInterval = setInterval(moveSquare, 50);
-
-    // Stop moving after 5 seconds
-    setTimeout(function() {
-        clearInterval(moveInterval);
-    }, 5000);
-}
-
-// Change color, move, and bounce every 5 seconds
-setInterval(changeColorAndMove, 5000);
 </script>
     
 </body>
