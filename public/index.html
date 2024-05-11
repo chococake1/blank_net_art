@@ -16,6 +16,9 @@
         background-color: red;
         position: absolute;
     }
+    #canvas {
+        border: 1px solid black;
+    }
 </style>
 </head>
 
@@ -27,7 +30,7 @@
 <div id="colorSquare"></div>
 
 <script type="module">
-    const canvas = document.getElementById('canvas');
+const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
     // Set canvas width and height
