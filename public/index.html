@@ -101,7 +101,6 @@
 </script>
 
 
-<script type="module">
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
@@ -109,32 +108,33 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Function to draw a square
-    function drawSquare(x, y, size, color) {
-        ctx.fillStyle = color;
-        ctx.fillRect(x, y, size, size);
+    // Function to sort pixels around the middle of the canvas
+    function sortPixels() {
+        const squareSize = 100;
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+
+        // Sort pixels within the square centered at the middle of the canvas
+        const imageData = ctx.getImageData(centerX - squareSize/2, centerY - squareSize/2, squareSize, squareSize);
+        const data = imageData.data;
+        const sortedData = Array.from(data).sort((a, b) => a - b);
+        ctx.putImageData(new ImageData(new Uint8ClampedArray(sortedData), squareSize, squareSize), centerX - squareSize/2, centerY - squareSize/2);
     }
 
-    // Event listener for click event on canvas
-    canvas.addEventListener('click', function(event) {
-        if (event.button === 0) { // Check if left mouse button is clicked
-            const x = event.clientX;
-            const y = event.clientY;
-            const squareSize = 100;
-            const color = randomColor();
-            
-            // Sort pixels within the square
-            const imageData = ctx.getImageData(x - squareSize/2, y - squareSize/2, squareSize, squareSize);
-            const data = imageData.data;
-            const sortedData = Array.from(data).sort((a, b) => a - b);
-            ctx.putImageData(new ImageData(new Uint8ClampedArray(sortedData), squareSize, squareSize), x - squareSize/2, y - squareSize/2);
-        }
-    });
+    // Function to animate and sort pixels every frame
+    function animate() {
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Function to generate a random color
-    function randomColor() {
-        return '#' + Math.floor(Math.random() * 16777215).toString(16);
+        // Draw something here if needed
+        
+        // Sort pixels around the middle of the canvas
+        sortPixels();
+
+        requestAnimationFrame(animate);
     }
+
+    animate();
 </script>
     
 </body>
