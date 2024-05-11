@@ -29,7 +29,7 @@
 <div id="colorSquare"></div>
 
 <script type="module">
-const canvas = document.getElementById('canvas');
+    const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
     // Set canvas width and height
@@ -40,11 +40,11 @@ const canvas = document.getElementById('canvas');
     let squareSize = 240; // 8 times bigger
     let squareX = Math.random() * (canvas.width - squareSize);
     let squareY = Math.random() * (canvas.height - squareSize);
-    let dx = 2;
-    let dy = 2;
+    let dx = 8; // 4 times faster
+    let dy = 8; // 4 times faster
 
     // Color change interval
-    const colorChangeInterval = 12; // Change color every 12 frames
+    const colorChangeInterval = 8; // Change color every 8 frames
     let frameCount = 0;
 
     // Array to store previous positions and colors
