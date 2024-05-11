@@ -100,7 +100,7 @@
     animate();
 </script>
 
-
+<script type="module">
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
@@ -108,17 +108,53 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    // Function to get brightness from RGB color
+    function getBrightness(r, g, b) {
+        return (r * 299 + g * 587 + b * 114) / 1000;
+    }
+
+    // Function to sort pixels by brightness
+    function sortPixelsByBrightness(data) {
+        const pixels = [];
+
+        // Convert pixel data to objects with brightness and original index
+        for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            const brightness = getBrightness(r, g, b);
+            pixels.push({ brightness, index: i });
+        }
+
+        // Sort pixels by brightness
+        pixels.sort((a, b) => a.brightness - b.brightness);
+
+        // Rearrange pixel data based on sorted indices
+        const newData = new Uint8ClampedArray(data.length);
+        pixels.forEach((pixel, i) => {
+            const dataIndex = pixel.index;
+            const pixelIndex = i * 4;
+            newData[pixelIndex] = data[dataIndex];
+            newData[pixelIndex + 1] = data[dataIndex + 1];
+            newData[pixelIndex + 2] = data[dataIndex + 2];
+            newData[pixelIndex + 3] = data[dataIndex + 3];
+        });
+
+        return newData;
+    }
+
     // Function to sort pixels around the middle of the canvas
     function sortPixels() {
         const squareSize = 100;
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
 
-        // Sort pixels within the square centered at the middle of the canvas
+        // Get pixel data within the square centered at the middle of the canvas
         const imageData = ctx.getImageData(centerX - squareSize/2, centerY - squareSize/2, squareSize, squareSize);
-        const data = imageData.data;
-        const sortedData = Array.from(data).sort((a, b) => a - b);
-        ctx.putImageData(new ImageData(new Uint8ClampedArray(sortedData), squareSize, squareSize), centerX - squareSize/2, centerY - squareSize/2);
+        const sortedData = sortPixelsByBrightness(imageData.data);
+
+        // Put sorted pixel data back to the canvas
+        ctx.putImageData(new ImageData(sortedData, squareSize, squareSize), centerX - squareSize/2, centerY - squareSize/2);
     }
 
     // Function to animate and sort pixels every frame
@@ -136,7 +172,6 @@
 
     animate();
 </script>
-    
 </body>
 
 
