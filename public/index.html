@@ -29,7 +29,7 @@
 <div id="colorSquare"></div>
 
 <script type="module">
-    const canvas = document.getElementById('canvas');
+const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
     // Set canvas width and height
@@ -42,6 +42,10 @@
     let squareY = Math.random() * (canvas.height - squareSize);
     let dx = 2;
     let dy = 2;
+
+    // Color change interval
+    const colorChangeInterval = 4; // Change color every 4 frames
+    let frameCount = 0;
 
     // Array to store previous positions and colors
     const trail = [];
@@ -58,8 +62,16 @@
     }
 
     function animate() {
-        // Generate a random color for the square
-        const color = randomColor();
+        frameCount++;
+
+        // Change color every colorChangeInterval frames
+        if (frameCount % colorChangeInterval === 0) {
+            // Generate a random color for the square
+            const color = randomColor();
+
+            // Add current position and color to trail
+            trail.push({ x: squareX, y: squareY, color: color });
+        }
 
         // Move the square
         squareX += dx;
@@ -73,9 +85,6 @@
             dy = -dy;
         }
 
-        // Add current position and color to trail
-        trail.push({ x: squareX, y: squareY, color: color });
-
         // Clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -83,11 +92,6 @@
         for (let i = 0; i < trail.length; i++) {
             const { x, y, color } = trail[i];
             drawSquare(x, y, squareSize, color);
-        }
-
-        // Keep trail length limited to improve performance
-        if (trail.length > 50) {
-            trail.shift();
         }
 
         requestAnimationFrame(animate);
