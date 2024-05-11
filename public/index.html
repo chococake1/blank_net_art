@@ -37,11 +37,14 @@
     canvas.height = window.innerHeight;
 
     // Square properties
-    let squareSize = 30;
+    let squareSize = 240; // 8 times bigger
     let squareX = Math.random() * (canvas.width - squareSize);
     let squareY = Math.random() * (canvas.height - squareSize);
     let dx = 2;
     let dy = 2;
+
+    // Array to store previous positions and colors
+    const trail = [];
 
     // Function to generate a random color
     function randomColor() {
@@ -70,12 +73,22 @@
             dy = -dy;
         }
 
-        // Draw the square trail
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.05)'; // Adjust opacity here
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Add current position and color to trail
+        trail.push({ x: squareX, y: squareY, color: color });
 
-        // Draw the square
-        drawSquare(squareX, squareY, squareSize, color);
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw trail
+        for (let i = 0; i < trail.length; i++) {
+            const { x, y, color } = trail[i];
+            drawSquare(x, y, squareSize, color);
+        }
+
+        // Keep trail length limited to improve performance
+        if (trail.length > 50) {
+            trail.shift();
+        }
 
         requestAnimationFrame(animate);
     }
