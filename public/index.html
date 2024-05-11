@@ -43,6 +43,10 @@
     let frameCount = 0;
 
     function pixelSort(event) {
+        // Draw square
+        ctx.fillStyle = 'red'; // Color of the square
+        ctx.fillRect(100, 100, 50, 50); // Position and size of the square
+
         // Get pixel data
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const pixels = imageData.data;
