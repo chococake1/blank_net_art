@@ -59,6 +59,12 @@
         // Generate a random color for the square
         const color = randomColor();
 
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw the square
+        drawSquare(squareX, squareY, squareSize, color);
+
         // Move the square
         squareX += dx;
         squareY += dy;
@@ -70,12 +76,6 @@
         if (squareY + squareSize > canvas.height || squareY < 0) {
             dy = -dy;
         }
-
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Draw the square
-        drawSquare(squareX, squareY, squareSize, color);
 
         requestAnimationFrame(animate);
     }
