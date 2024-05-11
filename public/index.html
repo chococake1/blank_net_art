@@ -100,77 +100,68 @@
     animate();
 </script>
 
+<canvas id="pixel_sort"></canvas>
+
 <script type="module">
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
+   import { PixelSorter } from "/scripts/pixel_sort.js"
 
-    // Set canvas width and height
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+   const cnv  = document.getElementById(`pixel_sort`);
+   const ctx = cnv.getContext(`2d`);
+   const sorter = new PixelSorter(ctx);
 
-    // Function to get brightness from RGB color
-    function getBrightness(r, g, b) {
-        return (r * 299 + g * 587 + b * 114) / 1000;
-    }
+   // Define the middle content
+   const middleContent = "Your text or shape here";
 
-    // Function to sort pixels by brightness
-    function sortPixelsByBrightness(data) {
-        const pixels = [];
+   // Function to draw the middle content
+   const drawMiddleContent = () => {
+      ctx.fillStyle = "black"; // Set the color of the content
+      ctx.font = "30px Arial"; // Set the font size and type
+      ctx.textAlign = "center"; // Set the text alignment
+      ctx.fillText(middleContent, cnv.width / 2, cnv.height / 2); // Draw the text in the middle
+      // If you want to draw a shape instead of text, use ctx.fillRect(), ctx.strokeRect(), etc.
+   };
 
-        // Convert pixel data to objects with brightness and original index
-        for (let i = 0; i < data.length; i += 4) {
-            const r = data[i];
-            const g = data[i + 1];
-            const b = data[i + 2];
-            const brightness = getBrightness(r, g, b);
-            pixels.push({ brightness, index: i });
-        }
+   // Resize the canvas
+   const resizeCanvas = () => {
+      cnv.width = cnv.parentNode.scrollWidth;
+      cnv.height = cnv.width * 9 / 16;
+      drawMiddleContent(); // Redraw the middle content after resizing
+   };
 
-        // Sort pixels by brightness
-        pixels.sort((a, b) => a.brightness - b.brightness);
+   // Initial setup
+   const setup = () => {
+      resizeCanvas();
+      sorter.init();
+      draw_frame();
+   };
 
-        // Rearrange pixel data based on sorted indices
-        const newData = new Uint8ClampedArray(data.length);
-        pixels.forEach((pixel, i) => {
-            const dataIndex = pixel.index;
-            const pixelIndex = i * 4;
-            newData[pixelIndex] = data[dataIndex];
-            newData[pixelIndex + 1] = data[dataIndex + 1];
-            newData[pixelIndex + 2] = data[dataIndex + 2];
-            newData[pixelIndex + 3] = data[dataIndex + 3];
-        });
+   // Handle window resize
+   window.addEventListener("resize", resizeCanvas);
 
-        return newData;
-    }
+   // Draw a frame
+   let frame_count = 0;
+   const draw_frame = () => {
+      drawMiddleContent(); // Redraw the middle content in each frame
+      let sig = Math.cos(frame_count * 2 * Math.PI / 500);
+      const mid = {
+         x: cnv.width / 2,
+         y: cnv.height / 2
+      };
+      const dim = {
+         x: Math.floor((sig + 3) * (cnv.width / 6)) + 1,
+         y: Math.floor((sig + 1) * (cnv.height / 6)) + 1
+      };
+      const pos = {
+         x: Math.floor(mid.x - (dim.x / 2)),
+         y: Math.floor(mid.y - (dim.y / 2))
+      };
+      sorter.glitch(pos, dim);
+      frame_count++;
+      requestAnimationFrame(draw_frame);
+   };
 
-    // Function to sort pixels around the middle of the canvas
-    function sortPixels() {
-        const squareSize = 100;
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
-
-        // Get pixel data within the square centered at the middle of the canvas
-        const imageData = ctx.getImageData(centerX - squareSize/2, centerY - squareSize/2, squareSize, squareSize);
-        const sortedData = sortPixelsByBrightness(imageData.data);
-
-        // Put sorted pixel data back to the canvas
-        ctx.putImageData(new ImageData(sortedData, squareSize, squareSize), centerX - squareSize/2, centerY - squareSize/2);
-    }
-
-    // Function to animate and sort pixels every frame
-    function animate() {
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Draw something here if needed
-        
-        // Sort pixels around the middle of the canvas
-        sortPixels();
-
-        requestAnimationFrame(animate);
-    }
-
-    animate();
+   // Call the setup function when the page loads
+   window.addEventListener("load", setup);
 </script>
 </body>
 
