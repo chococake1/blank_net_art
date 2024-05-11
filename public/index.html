@@ -48,47 +48,24 @@
         ctx.fillRect(100, 100, 50, 50); // Position and size of the square
 
         // Get pixel data
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const imageData = ctx.getImageData(100, 100, 50, 50); // Capture the square area
         const pixels = imageData.data;
-
-        // Convert pixels to RGBA arrays for sorting
-        const pixelArray = [];
-        for (let i = 0; i < pixels.length; i += 4) {
-            const rgba = [
-                pixels[i],     // Red
-                pixels[i + 1], // Green
-                pixels[i + 2], // Blue
-                pixels[i + 3]  // Alpha
-            ];
-            pixelArray.push(rgba);
-        }
-
-        // Sort the pixelArray based on a criterion (e.g., brightness)
-        pixelArray.sort((a, b) => {
-            // Calculate brightness of each pixel (grayscale value)
-            const brightnessA = (a[0] + a[1] + a[2]) / 3;
-            const brightnessB = (b[0] + b[1] + b[2]) / 3;
-            return brightnessA - brightnessB;
-        });
 
         // Change color every 8 frames
         if (frameCount % 8 === 0) {
             // Change color
             const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
-            for (let i = 0; i < pixelArray.length; i++) {
+            for (let i = 0; i < pixels.length; i += 4) {
                 // Update pixel data with the new color
-                pixels[i * 4] = parseInt(randomColor.substr(1, 2), 16);     // Red
-                pixels[i * 4 + 1] = parseInt(randomColor.substr(3, 2), 16); // Green
-                pixels[i * 4 + 2] = parseInt(randomColor.substr(5, 2), 16); // Blue
-                pixels[i * 4 + 3] = 255; // Alpha (fully opaque)
+                pixels[i] = parseInt(randomColor.substr(1, 2), 16);     // Red
+                pixels[i + 1] = parseInt(randomColor.substr(3, 2), 16); // Green
+                pixels[i + 2] = parseInt(randomColor.substr(5, 2), 16); // Blue
+                pixels[i + 3] = 255; // Alpha (fully opaque)
             }
         }
 
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
         // Put modified pixel data back to canvas
-        ctx.putImageData(imageData, 0, 0);
+        ctx.putImageData(imageData, 100, 100); // Put the modified pixels back at the same position
 
         // Increment frame counter
         frameCount++;
