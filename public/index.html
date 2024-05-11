@@ -27,9 +27,7 @@
 <div id="colorSquare"></div>
 
 <script type="module">
-
-</script>
-    function changeColorAndMove() {
+function changeColorAndMove() {
     var square = document.getElementById("colorSquare");
     var randomColor = '#' + Math.floor(Math.random()*16777215).toString(16); // Generates a random hex color
     square.style.backgroundColor = randomColor;
@@ -84,6 +82,8 @@
 
 // Change color, move, and bounce every 5 seconds
 setInterval(changeColorAndMove, 5000);
+</script>
+    
 </body>
 
 
