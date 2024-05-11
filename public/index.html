@@ -100,68 +100,66 @@
     animate();
 </script>
 
-<!-- <canvas id="pixel_sort"></canvas> -->
+<canvas id="pixel_sort_canvas" style="border:1px solid black;"></canvas>
 
-<script type="module">
-   import { PixelSorter } from "/pixel_sort.js"
+<script>
+    // Get the canvas element
+    const canvas = document.getElementById("pixel_sort_canvas");
+    const ctx = canvas.getContext("2d");
 
-   const cnv  = document.getElementById(`pixel_sort`);
-   const ctx = cnv.getContext(`2d`);
-   const sorter = new PixelSorter(ctx);
+    // Initialize a PixelSorter object
+    const sorter = new PixelSorter(ctx);
 
-   // Define the middle content
-   const middleContent = "Your text or shape here";
+    // Function to sort pixels within a square region
+    const sortPixels = (x, y, size) => {
+        // Get the pixel data of the specified region
+        const imageData = ctx.getImageData(x, y, size, size);
+        const pixels = imageData.data;
 
-   // Function to draw the middle content
-   const drawMiddleContent = () => {
-      ctx.fillStyle = "black"; // Set the color of the content
-      ctx.font = "30px Arial"; // Set the font size and type
-      ctx.textAlign = "center"; // Set the text alignment
-      ctx.fillText(middleContent, cnv.width / 2, cnv.height / 2); // Draw the text in the middle
-      // If you want to draw a shape instead of text, use ctx.fillRect(), ctx.strokeRect(), etc.
-   };
+        // Convert pixel data into an array of pixels
+        const pixelArray = [];
+        for (let i = 0; i < pixels.length; i += 4) {
+            const r = pixels[i];
+            const g = pixels[i + 1];
+            const b = pixels[i + 2];
+            const a = pixels[i + 3];
+            pixelArray.push({ r, g, b, a });
+        }
 
-   // Resize the canvas
-   const resizeCanvas = () => {
-      cnv.width = cnv.parentNode.scrollWidth;
-      cnv.height = cnv.width * 9 / 16;
-      drawMiddleContent(); // Redraw the middle content after resizing
-   };
+        // Sort the pixel array by color
+        pixelArray.sort((a, b) => {
+            // Calculate the brightness of each pixel
+            const brightnessA = (a.r + a.g + a.b) / 3;
+            const brightnessB = (b.r + b.g + b.b) / 3;
+            return brightnessA - brightnessB;
+        });
 
-   // Initial setup
-   const setup = () => {
-      resizeCanvas();
-      sorter.init();
-      draw_frame();
-   };
+        // Update the pixel data with the sorted pixels
+        for (let i = 0; i < pixels.length; i += 4) {
+            const pixelIndex = i / 4;
+            pixels[i] = pixelArray[pixelIndex].r;
+            pixels[i + 1] = pixelArray[pixelIndex].g;
+            pixels[i + 2] = pixelArray[pixelIndex].b;
+            pixels[i + 3] = pixelArray[pixelIndex].a;
+        }
 
-   // Handle window resize
-   window.addEventListener("resize", resizeCanvas);
+        // Put the modified pixel data back onto the canvas
+        ctx.putImageData(imageData, x, y);
+    };
 
-   // Draw a frame
-   let frame_count = 0;
-   const draw_frame = () => {
-      drawMiddleContent(); // Redraw the middle content in each frame
-      let sig = Math.cos(frame_count * 2 * Math.PI / 500);
-      const mid = {
-         x: cnv.width / 2,
-         y: cnv.height / 2
-      };
-      const dim = {
-         x: Math.floor((sig + 3) * (cnv.width / 6)) + 1,
-         y: Math.floor((sig + 1) * (cnv.height / 6)) + 1
-      };
-      const pos = {
-         x: Math.floor(mid.x - (dim.x / 2)),
-         y: Math.floor(mid.y - (dim.y / 2))
-      };
-      sorter.glitch(pos, dim);
-      frame_count++;
-      requestAnimationFrame(draw_frame);
-   };
+    // Event listener for left-clicks on the canvas
+    canvas.addEventListener("click", (event) => {
+        // Get the coordinates of the click relative to the canvas
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
 
-   // Call the setup function when the page loads
-   window.addEventListener("load", setup);
+        // Define the size of the square
+        const size = 100;
+
+        // Sort pixels within the square region
+        sortPixels(x - size / 2, y - size / 2, size);
+    });
 </script>
     
 </body>
