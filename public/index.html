@@ -36,8 +36,8 @@
 
     // Square properties
     let squareSize = 30;
-    let squareX = canvas.width / 2 - squareSize / 2;
-    let squareY = canvas.height / 2 - squareSize / 2;
+    let squareX = Math.random() * (canvas.width - squareSize);
+    let squareY = Math.random() * (canvas.height - squareSize);
     let dx = 2;
     let dy = 2;
 
@@ -66,7 +66,7 @@
         squareX += dx;
         squareY += dy;
 
-        // Reverse direction if hitting the canvas edges
+        // Bounce off the edges
         if (squareX + squareSize > canvas.width || squareX < 0) {
             dx = -dx;
         }
