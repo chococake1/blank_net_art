@@ -25,6 +25,83 @@
 <body>
 <canvas id="canvas"></canvas>
 
+<script type="module">
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Set canvas width and height
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Function to get combined RGB value from pixel data
+    function getRGBValue(r, g, b) {
+        return r * 65536 + g * 256 + b;
+    }
+
+    // Function to sort pixels by RGB value
+    function sortPixelsByColor(data) {
+        const pixels = [];
+
+        // Convert pixel data to objects with combined RGB value and original index
+        for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            const rgbValue = getRGBValue(r, g, b);
+            pixels.push({ rgbValue, index: i });
+        }
+
+        // Sort pixels by combined RGB value
+        pixels.sort((a, b) => a.rgbValue - b.rgbValue);
+
+        // Rearrange pixel data based on sorted indices
+        const newData = new Uint8ClampedArray(data.length);
+        pixels.forEach((pixel, i) => {
+            const dataIndex = pixel.index;
+            const pixelIndex = i * 4;
+            newData[pixelIndex] = data[dataIndex];
+            newData[pixelIndex + 1] = data[dataIndex + 1];
+            newData[pixelIndex + 2] = data[dataIndex + 2];
+            newData[pixelIndex + 3] = data[dataIndex + 3];
+        });
+
+        return newData;
+    }
+
+    // Function to sort pixels within the square at the given position
+    function sortPixelsAtPosition(x, y) {
+        const squareSize = 100;
+
+        // Get pixel data within the square centered at the given position
+        const imageData = ctx.getImageData(x - squareSize/2, y - squareSize/2, squareSize, squareSize);
+        const sortedData = sortPixelsByColor(imageData.data);
+
+        // Put sorted pixel data back to the canvas
+        ctx.putImageData(new ImageData(sortedData, squareSize, squareSize), x - squareSize/2, y - squareSize/2);
+    }
+
+    // Event listener for click event on canvas
+    canvas.addEventListener('click', function(event) {
+        const x = event.clientX;
+        const y = event.clientY;
+        
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Redraw canvas content
+        // (This part can be omitted if you have other content on the canvas)
+        // drawSomething();
+
+        // Sort pixels at the clicked position
+        sortPixelsAtPosition(x, y);
+    });
+
+    // Function to draw something on the canvas (optional)
+    function drawSomething() {
+        // Draw something on the canvas if needed
+    }
+
+</script>
 
 <div id="colorSquare"></div>
 
@@ -98,73 +175,6 @@
     }
 
     animate();
-</script>
-    
-<canvas id="canvas"></canvas>
-<script type="module">
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-
-    // Set canvas width and height
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    // Function to get combined RGB value from pixel data
-    function getRGBValue(r, g, b) {
-        return r * 65536 + g * 256 + b;
-    }
-
-    // Function to sort pixels by RGB value
-    function sortPixelsByColor(data) {
-        const pixels = [];
-
-        // Convert pixel data to objects with combined RGB value and original index
-        for (let i = 0; i < data.length; i += 4) {
-            const r = data[i];
-            const g = data[i + 1];
-            const b = data[i + 2];
-            const rgbValue = getRGBValue(r, g, b);
-            pixels.push({ rgbValue, index: i });
-        }
-
-        // Sort pixels by combined RGB value
-        pixels.sort((a, b) => a.rgbValue - b.rgbValue);
-
-        // Rearrange pixel data based on sorted indices
-        const newData = new Uint8ClampedArray(data.length);
-        pixels.forEach((pixel, i) => {
-            const dataIndex = pixel.index;
-            const pixelIndex = i * 4;
-            newData[pixelIndex] = data[dataIndex];
-            newData[pixelIndex + 1] = data[dataIndex + 1];
-            newData[pixelIndex + 2] = data[dataIndex + 2];
-            newData[pixelIndex + 3] = data[dataIndex + 3];
-        });
-
-        return newData;
-    }
-
-    // Function to sort pixels within the square at the given position
-    function sortPixelsAtPosition(x, y) {
-        const squareSize = 100;
-
-        // Get pixel data within the square centered at the given position
-        const imageData = ctx.getImageData(x - squareSize/2, y - squareSize/2, squareSize, squareSize);
-        const sortedData = sortPixelsByColor(imageData.data);
-
-        // Put sorted pixel data back to the canvas
-        ctx.putImageData(new ImageData(sortedData, squareSize, squareSize), x - squareSize/2, y - squareSize/2);
-    }
-
-    // Event listener for click event on canvas
-    canvas.addEventListener('click', function(event) {
-        const x = event.clientX;
-        const y = event.clientY;
-        
-        // Sort pixels at the clicked position
-        sortPixelsAtPosition(x, y);
-    });
-
 </script>
     
 </body>
