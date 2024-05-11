@@ -99,6 +99,43 @@
 
     animate();
 </script>
+
+
+<script type="module">
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Set canvas width and height
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Function to draw a square
+    function drawSquare(x, y, size, color) {
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y, size, size);
+    }
+
+    // Event listener for click event on canvas
+    canvas.addEventListener('click', function(event) {
+        if (event.button === 0) { // Check if left mouse button is clicked
+            const x = event.clientX;
+            const y = event.clientY;
+            const squareSize = 100;
+            const color = randomColor();
+            
+            // Sort pixels within the square
+            const imageData = ctx.getImageData(x - squareSize/2, y - squareSize/2, squareSize, squareSize);
+            const data = imageData.data;
+            const sortedData = Array.from(data).sort((a, b) => a - b);
+            ctx.putImageData(new ImageData(new Uint8ClampedArray(sortedData), squareSize, squareSize), x - squareSize/2, y - squareSize/2);
+        }
+    });
+
+    // Function to generate a random color
+    function randomColor() {
+        return '#' + Math.floor(Math.random() * 16777215).toString(16);
+    }
+</script>
     
 </body>
 
