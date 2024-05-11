@@ -58,9 +58,6 @@
         // Generate a random color for the square
         const color = randomColor();
 
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
         // Move the square
         squareX += dx;
         squareY += dy;
@@ -72,6 +69,10 @@
         if (squareY + squareSize > canvas.height || squareY < 0) {
             dy = -dy;
         }
+
+        // Draw the square trail
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.05)'; // Adjust opacity here
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         // Draw the square
         drawSquare(squareX, squareY, squareSize, color);
