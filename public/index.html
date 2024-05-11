@@ -102,6 +102,8 @@
 
 <canvas id="pixel_sort_canvas" style="border:1px solid black;"></canvas>
 
+<canvas id="pixel_sort_canvas" style="border:1px solid black;"></canvas>
+
 <script>
     // Get the canvas element
     const canvas = document.getElementById("pixel_sort_canvas");
@@ -151,14 +153,14 @@
     canvas.addEventListener("click", (event) => {
         // Get the coordinates of the click relative to the canvas
         const rect = canvas.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
+        const x = event.clientX - rect.left - 50; // Adjusted to center square
+        const y = event.clientY - rect.top - 50; // Adjusted to center square
 
         // Define the size of the square
         const size = 100;
 
         // Sort pixels within the square region
-        sortPixels(x - size / 2, y - size / 2, size);
+        sortPixels(x, y, size);
     });
 </script>
     
