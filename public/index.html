@@ -36,68 +36,68 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Square properties
-    let squareSize = 240; // 8 times bigger
-    let squareX = Math.random() * (canvas.width - squareSize);
-    let squareY = Math.random() * (canvas.height - squareSize);
-    let dx = 8; // 4 times faster
-    let dy = 8; // 4 times faster
+    // Event listener for click
+    canvas.addEventListener('click', pixelSort);
 
-    // Color change interval
-    const colorChangeInterval = 8; // Change color every 8 frames
+    // Frame counter for color change
     let frameCount = 0;
 
-    // Array to store previous positions and colors
-    const trail = [];
+    function pixelSort(event) {
+        // Get mouse coordinates
+        const mouseX = event.clientX;
+        const mouseY = event.clientY;
 
-    // Function to generate a random color
-    function randomColor() {
-        return '#' + Math.floor(Math.random() * 16777215).toString(16);
-    }
+        // Get pixel data
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const pixels = imageData.data;
 
-    // Function to draw a square
-    function drawSquare(x, y, size, color) {
-        ctx.fillStyle = color;
-        ctx.fillRect(x, y, size, size);
-    }
+        // Convert pixels to RGBA arrays for sorting
+        const pixelArray = [];
+        for (let i = 0; i < pixels.length; i += 4) {
+            const rgba = [
+                pixels[i],     // Red
+                pixels[i + 1], // Green
+                pixels[i + 2], // Blue
+                pixels[i + 3]  // Alpha
+            ];
+            pixelArray.push(rgba);
+        }
 
-    function animate() {
+        // Sort the pixelArray based on a criterion (e.g., brightness)
+        pixelArray.sort((a, b) => {
+            // Calculate brightness of each pixel (grayscale value)
+            const brightnessA = (a[0] + a[1] + a[2]) / 3;
+            const brightnessB = (b[0] + b[1] + b[2]) / 3;
+            return brightnessA - brightnessB;
+        });
+
+        // Change color every 8 frames
+        if (frameCount % 8 === 0) {
+            // Change color
+            const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            for (let i = 0; i < pixelArray.length; i++) {
+                const rgba = pixelArray[i];
+                rgba[0] = parseInt(randomColor.substr(1, 2), 16); // Red
+                rgba[1] = parseInt(randomColor.substr(3, 2), 16); // Green
+                rgba[2] = parseInt(randomColor.substr(5, 2), 16); // Blue
+            }
+        }
+
+        // Put sorted pixel data back onto the canvas
+        for (let i = 0; i < pixelArray.length; i++) {
+            const rgba = pixelArray[i];
+            pixels[i * 4] = rgba[0];     // Red
+            pixels[i * 4 + 1] = rgba[1]; // Green
+            pixels[i * 4 + 2] = rgba[2]; // Blue
+            pixels[i * 4 + 3] = rgba[3]; // Alpha
+        }
+
+        // Put modified pixel data back to canvas
+        ctx.putImageData(imageData, 0, 0);
+
+        // Increment frame counter
         frameCount++;
-
-        // Change color every colorChangeInterval frames
-        if (frameCount % colorChangeInterval === 0) {
-            // Generate a random color for the square
-            const color = randomColor();
-
-            // Add current position and color to trail
-            trail.push({ x: squareX, y: squareY, color: color });
-        }
-
-        // Move the square
-        squareX += dx;
-        squareY += dy;
-
-        // Bounce off the edges
-        if (squareX + squareSize > canvas.width || squareX < 0) {
-            dx = -dx;
-        }
-        if (squareY + squareSize > canvas.height || squareY < 0) {
-            dy = -dy;
-        }
-
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Draw trail
-        for (let i = 0; i < trail.length; i++) {
-            const { x, y, color } = trail[i];
-            drawSquare(x, y, squareSize, color);
-        }
-
-        requestAnimationFrame(animate);
     }
-
-    animate();
 </script>
     
 </body>
