@@ -36,40 +36,68 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Event listener for click
-    canvas.addEventListener('click', pixelSort);
+    // Square properties
+    let squareSize = 240; // 8 times bigger
+    let squareX = Math.random() * (canvas.width - squareSize);
+    let squareY = Math.random() * (canvas.height - squareSize);
+    let dx = 8; // 4 times faster
+    let dy = 8; // 4 times faster
 
-    // Frame counter for color change
+    // Color change interval
+    const colorChangeInterval = 4; // Change color every 4 frames
     let frameCount = 0;
 
-    function pixelSort(event) {
-        // Draw square
-        ctx.fillStyle = 'red'; // Color of the square
-        ctx.fillRect(100, 100, 50, 50); // Position and size of the square
+    // Array to store previous positions and colors
+    const trail = [];
 
-        // Get pixel data
-        const imageData = ctx.getImageData(100, 100, 50, 50); // Capture the square area
-        const pixels = imageData.data;
+    // Function to generate a random color
+    function randomColor() {
+        return '#' + Math.floor(Math.random() * 16777215).toString(16);
+    }
 
-        // Change color every 8 frames
-        if (frameCount % 8 === 0) {
-            // Change color
-            const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
-            for (let i = 0; i < pixels.length; i += 4) {
-                // Update pixel data with the new color
-                pixels[i] = parseInt(randomColor.substr(1, 2), 16);     // Red
-                pixels[i + 1] = parseInt(randomColor.substr(3, 2), 16); // Green
-                pixels[i + 2] = parseInt(randomColor.substr(5, 2), 16); // Blue
-                pixels[i + 3] = 255; // Alpha (fully opaque)
-            }
+    // Function to draw a square
+    function drawSquare(x, y, size, color) {
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y, size, size);
+    }
+
+    function animate() {
+        frameCount++;
+
+        // Change color every colorChangeInterval frames
+        if (frameCount % colorChangeInterval === 0) {
+            // Generate a random color for the square
+            const color = randomColor();
+
+            // Add current position and color to trail
+            trail.push({ x: squareX, y: squareY, color: color });
         }
 
-        // Put modified pixel data back to canvas
-        ctx.putImageData(imageData, 100, 100); // Put the modified pixels back at the same position
+        // Move the square
+        squareX += dx;
+        squareY += dy;
 
-        // Increment frame counter
-        frameCount++;
+        // Bounce off the edges
+        if (squareX + squareSize > canvas.width || squareX < 0) {
+            dx = -dx;
+        }
+        if (squareY + squareSize > canvas.height || squareY < 0) {
+            dy = -dy;
+        }
+
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw trail
+        for (let i = 0; i < trail.length; i++) {
+            const { x, y, color } = trail[i];
+            drawSquare(x, y, squareSize, color);
+        }
+
+        requestAnimationFrame(animate);
     }
+
+    animate();
 </script>
     
 </body>
