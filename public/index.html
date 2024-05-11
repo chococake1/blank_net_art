@@ -100,9 +100,70 @@
     animate();
 </script>
 
-<canvas id="pixel_sort"></canvas>
+<!-- <canvas id="pixel_sort"></canvas>
+ -->
+<script type="module">
+   import { PixelSorter } from "/pixel_sort.js"
 
+   const cnv  = document.getElementById(`pixel_sort`);
+   const ctx = cnv.getContext(`2d`);
+   const sorter = new PixelSorter(ctx);
 
+   // Define the middle content
+   const middleContent = "Your text or shape here";
+
+   // Function to draw the middle content
+   const drawMiddleContent = () => {
+      ctx.fillStyle = "black"; // Set the color of the content
+      ctx.font = "30px Arial"; // Set the font size and type
+      ctx.textAlign = "center"; // Set the text alignment
+      ctx.fillText(middleContent, cnv.width / 2, cnv.height / 2); // Draw the text in the middle
+      // If you want to draw a shape instead of text, use ctx.fillRect(), ctx.strokeRect(), etc.
+   };
+
+   // Resize the canvas
+   const resizeCanvas = () => {
+      cnv.width = cnv.parentNode.scrollWidth;
+      cnv.height = cnv.width * 9 / 16;
+      drawMiddleContent(); // Redraw the middle content after resizing
+   };
+
+   // Initial setup
+   const setup = () => {
+      resizeCanvas();
+      sorter.init();
+      draw_frame();
+   };
+
+   // Handle window resize
+   window.addEventListener("resize", resizeCanvas);
+
+   // Draw a frame
+   let frame_count = 0;
+   const draw_frame = () => {
+      drawMiddleContent(); // Redraw the middle content in each frame
+      let sig = Math.cos(frame_count * 2 * Math.PI / 500);
+      const mid = {
+         x: cnv.width / 2,
+         y: cnv.height / 2
+      };
+      const dim = {
+         x: Math.floor((sig + 3) * (cnv.width / 6)) + 1,
+         y: Math.floor((sig + 1) * (cnv.height / 6)) + 1
+      };
+      const pos = {
+         x: Math.floor(mid.x - (dim.x / 2)),
+         y: Math.floor(mid.y - (dim.y / 2))
+      };
+      sorter.glitch(pos, dim);
+      frame_count++;
+      requestAnimationFrame(draw_frame);
+   };
+
+   // Call the setup function when the page loads
+   window.addEventListener("load", setup);
+</script>
+    
 </body>
 
 
