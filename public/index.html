@@ -30,7 +30,7 @@
 <div id="colorSquare"></div>
 
 <script type="module">
-const canvas = document.getElementById('canvas');
+    const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
     // Set canvas width and height
@@ -56,14 +56,8 @@ const canvas = document.getElementById('canvas');
     }
 
     function animate() {
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
         // Generate a random color for the square
         const color = randomColor();
-
-        // Draw the square
-        drawSquare(squareX, squareY, squareSize, color);
 
         // Move the square
         squareX += dx;
@@ -76,6 +70,12 @@ const canvas = document.getElementById('canvas');
         if (squareY + squareSize > canvas.height || squareY < 0) {
             dy = -dy;
         }
+
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw the square
+        drawSquare(squareX, squareY, squareSize, color);
 
         requestAnimationFrame(animate);
     }
