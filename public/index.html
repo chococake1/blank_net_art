@@ -36,68 +36,30 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Square properties
-    let squareSize = 240; // 8 times bigger
-    let squareX = Math.random() * (canvas.width - squareSize);
-    let squareY = Math.random() * (canvas.height - squareSize);
-    let dx = 8; // 4 times faster
-    let dy = 8; // 4 times faster
-
-    // Color change interval
-    const colorChangeInterval = 4; // Change color every 4 frames
-    let frameCount = 0;
-
-    // Array to store previous positions and colors
-    const trail = [];
-
-    // Function to generate a random color
-    function randomColor() {
-        return '#' + Math.floor(Math.random() * 16777215).toString(16);
-    }
-
     // Function to draw a square
     function drawSquare(x, y, size, color) {
         ctx.fillStyle = color;
         ctx.fillRect(x, y, size, size);
     }
 
-    function animate() {
-        frameCount++;
+    // Event listener for click event on canvas
+    canvas.addEventListener('click', function(event) {
+        const x = event.clientX;
+        const y = event.clientY;
+        const squareSize = 100;
+        const color = randomColor();
+        
+        // Sort pixels within the square
+        const imageData = ctx.getImageData(x - squareSize/2, y - squareSize/2, squareSize, squareSize);
+        const data = imageData.data;
+        const sortedData = Array.from(data).sort((a, b) => a - b);
+        ctx.putImageData(new ImageData(new Uint8ClampedArray(sortedData), squareSize, squareSize), x - squareSize/2, y - squareSize/2);
+    });
 
-        // Change color every colorChangeInterval frames
-        if (frameCount % colorChangeInterval === 0) {
-            // Generate a random color for the square
-            const color = randomColor();
-
-            // Add current position and color to trail
-            trail.push({ x: squareX, y: squareY, color: color });
-        }
-
-        // Move the square
-        squareX += dx;
-        squareY += dy;
-
-        // Bounce off the edges
-        if (squareX + squareSize > canvas.width || squareX < 0) {
-            dx = -dx;
-        }
-        if (squareY + squareSize > canvas.height || squareY < 0) {
-            dy = -dy;
-        }
-
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Draw trail
-        for (let i = 0; i < trail.length; i++) {
-            const { x, y, color } = trail[i];
-            drawSquare(x, y, squareSize, color);
-        }
-
-        requestAnimationFrame(animate);
+    // Function to generate a random color
+    function randomColor() {
+        return '#' + Math.floor(Math.random() * 16777215).toString(16);
     }
-
-    animate();
 </script>
     
 </body>
