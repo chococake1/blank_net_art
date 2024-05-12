@@ -192,10 +192,11 @@
     }
 
     // Event listener for click on canvas to toggle animation
-    canvas.addEventListener('click', () => {
+    canvas.addEventListener('click', function() {
         toggleAnimation();
-    });
+    }, false);
 </script>
+
 
     
 <canvas id="pixel_sort"></canvas>
