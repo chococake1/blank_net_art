@@ -23,83 +23,6 @@
 </head>
 
 <body>
-<script type="module">
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-
-    // Set canvas width and height
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    // Function to get combined RGB value from pixel data
-    function getRGBValue(r, g, b) {
-        return r * 65536 + g * 256 + b;
-    }
-
-    // Function to sort pixels by RGB value
-    function sortPixelsByColor(data) {
-        const pixels = [];
-
-        // Convert pixel data to objects with combined RGB value and original index
-        for (let i = 0; i < data.length; i += 4) {
-            const r = data[i];
-            const g = data[i + 1];
-            const b = data[i + 2];
-            const rgbValue = getRGBValue(r, g, b);
-            pixels.push({ rgbValue, index: i });
-        }
-
-        // Sort pixels by combined RGB value
-        pixels.sort((a, b) => a.rgbValue - b.rgbValue);
-
-        // Rearrange pixel data based on sorted indices
-        const newData = new Uint8ClampedArray(data.length);
-        pixels.forEach((pixel, i) => {
-            const dataIndex = pixel.index;
-            const pixelIndex = i * 4;
-            newData[pixelIndex] = data[dataIndex];
-            newData[pixelIndex + 1] = data[dataIndex + 1];
-            newData[pixelIndex + 2] = data[dataIndex + 2];
-            newData[pixelIndex + 3] = data[dataIndex + 3];
-        });
-
-        return newData;
-    }
-
-    // Function to sort pixels within the square at the given position
-    function sortPixelsAtPosition(x, y) {
-        const squareSize = 100;
-
-        // Get pixel data within the square centered at the given position
-        const imageData = ctx.getImageData(x - squareSize/2, y - squareSize/2, squareSize, squareSize);
-        const sortedData = sortPixelsByColor(imageData.data);
-
-        // Put sorted pixel data back to the canvas
-        ctx.putImageData(new ImageData(sortedData, squareSize, squareSize), x - squareSize/2, y - squareSize/2);
-    }
-
-    // Event listener for click event on canvas
-    canvas.addEventListener('click', function(event) {
-        const x = event.clientX;
-        const y = event.clientY;
-        
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Redraw canvas content
-        // (This part can be omitted if you have other content on the canvas)
-        // drawSomething();
-
-        // Sort pixels at the clicked position
-        sortPixelsAtPosition(x, y);
-    });
-
-    // Function to draw something on the canvas (optional)
-    function drawSomething() {
-        // Draw something on the canvas if needed
-    }
-
-</script>
 
 <div id="colorSquare"></div>
 
@@ -173,6 +96,59 @@
     }
 
     animate();
+</script>
+
+    <canvas id="pixel_sort"></canvas>
+
+<script type="module">
+   import { PixelSorter } from "/pixel_sort.js"
+
+   const cnv  = document.getElementById (`pixel_sort`)
+   cnv.width  = cnv.parentNode.scrollWidth
+   cnv.height = cnv.width * 9 / 16   
+
+   const ctx = cnv.getContext (`2d`)
+   const sorter = new PixelSorter (ctx)
+
+   const img = new Image ()
+
+   img.onload = () => {
+      cnv.height = cnv.width * (img.height / img.width)
+      ctx.drawImage (img, 0, 0, cnv.width, cnv.height)
+      sorter.init ()
+      draw_frame ()
+   }
+
+   img.src = `/test.png`
+
+   let frame_count = 0
+   const draw_frame = () => {
+
+      ctx.drawImage (img, 0, 0, cnv.width, cnv.height)
+
+      let sig = Math.cos (frame_count * 2 * Math.PI / 500)
+
+      const mid = {
+         x: cnv.width / 2,
+         y: cnv.height / 2
+      }
+
+      const dim = {
+         x: Math.floor ((sig + 3) * (cnv.width / 6)) + 1,
+         y: Math.floor ((sig + 1) * (cnv.height / 6)) + 1
+      }
+
+      const pos = {
+         x: Math.floor (mid.x - (dim.x / 2)),
+         y: Math.floor (mid.y - (dim.y / 2))
+      }
+
+      sorter.glitch (pos, dim)
+
+      frame_count++
+      requestAnimationFrame (draw_frame)
+   }
+
 </script>
     
 </body>
