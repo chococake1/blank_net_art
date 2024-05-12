@@ -23,100 +23,27 @@
 </head>
 
 <body>
-
-<!-- <canvas id="canvas"></canvas>
-
+<canvas id="canvas"></canvas>
 
 <div id="colorSquare"></div>
-
-<script type="module">
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-
-    // Set canvas width and height
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    // Square properties
-    let squareSize = 240; // 8 times bigger
-    let squareX = Math.random() * (canvas.width - squareSize);
-    let squareY = Math.random() * (canvas.height - squareSize);
-    let dx = 8; // 4 times faster
-    let dy = 8; // 4 times faster
-
-    // Color change interval
-    const colorChangeInterval = 4; // Change color every 4 frames
-    let frameCount = 0;
-
-    // Array to store previous positions and colors
-    const trail = [];
-
-    // Function to generate a random color
-    function randomColor() {
-        return '#' + Math.floor(Math.random() * 16777215).toString(16);
-    }
-
-    // Function to draw a square
-    function drawSquare(x, y, size, color) {
-        ctx.fillStyle = color;
-        ctx.fillRect(x, y, size, size);
-    }
-
-    function animate() {
-        frameCount++;
-
-        // Change color every colorChangeInterval frames
-        if (frameCount % colorChangeInterval === 0) {
-            // Generate a random color for the square
-            const color = randomColor();
-
-            // Add current position and color to trail
-            trail.push({ x: squareX, y: squareY, color: color });
-        }
-
-        // Move the square
-        squareX += dx;
-        squareY += dy;
-
-        // Bounce off the edges
-        if (squareX + squareSize > canvas.width || squareX < 0) {
-            dx = -dx;
-        }
-        if (squareY + squareSize > canvas.height || squareY < 0) {
-            dy = -dy;
-        }
-
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Draw trail
-        for (let i = 0; i < trail.length; i++) {
-            const { x, y, color } = trail[i];
-            drawSquare(x, y, squareSize, color);
-        }
-
-        requestAnimationFrame(animate);
-    }
-
-    animate();
-</script> -->
 
 <canvas id="canvas"></canvas>
 
 <div id="colorSquare"></div>
 
 <script type="module">
+    // Get the canvas element and its 2D rendering context
     const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
+    // const ctx = canvas.getContext('2d');
 
-    // Set canvas width and height
+    // Set canvas width and height to fill the window
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
     // Square properties
     let squareSize = 240; // 8 times bigger
-    let squareX = Math.random() * (canvas.width - squareSize);
-    let squareY = Math.random() * (canvas.height - squareSize);
+    let squareX = Math.random() * (canvas.width - squareSize); // Random initial x position
+    let squareY = Math.random() * (canvas.height - squareSize); // Random initial y position
     let dx = 8; // 4 times faster
     let dy = 8; // 4 times faster
 
@@ -124,7 +51,7 @@
     const colorChangeInterval = 4; // Change color every 4 frames
     let frameCount = 0;
 
-    // Arrays to store previous positions and colors
+    // Arrays to store previous positions and colors for trail effect
     const trailPositions = [];
     const trailColors = [];
 
@@ -133,72 +60,73 @@
         return '#' + Math.floor(Math.random() * 16777215).toString(16);
     }
 
-    // Function to draw a square
+    // Function to draw a square on the canvas
     function drawSquare(x, y, size, color) {
-        ctx.fillStyle = color;
-        ctx.fillRect(x, y, size, size);
+        ctx.fillStyle = color; // Set fill color
+        ctx.fillRect(x, y, size, size); // Draw filled rectangle
     }
 
     let isRunning = true; // Boolean variable to control animation
 
+    // Function to animate the square
     function animate() {
         if (!isRunning) return; // Check if animation is paused
 
-        frameCount++;
+        frameCount++; // Increment frame count
 
         // Change color every colorChangeInterval frames
         if (frameCount % colorChangeInterval === 0) {
             // Generate a random color for the square
             const color = randomColor();
 
-            // Add current position and color to arrays
+            // Add current position and color to arrays for trail effect
             trailPositions.push({ x: squareX, y: squareY });
             trailColors.push(color);
         }
 
         // Move the square
-        squareX += dx;
-        squareY += dy;
+        squareX += dx; // Move horizontally
+        squareY += dy; // Move vertically
 
-        // Bounce off the edges
+        // Bounce off the edges if the square hits the canvas boundaries
         if (squareX + squareSize > canvas.width || squareX < 0) {
-            dx = -dx;
+            dx = -dx; // Reverse horizontal direction
         }
         if (squareY + squareSize > canvas.height || squareY < 0) {
-            dy = -dy;
+            dy = -dy; // Reverse vertical direction
         }
 
-        // Clear canvas
+        // Clear canvas before drawing the next frame
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Draw trail
         for (let i = 0; i < trailPositions.length; i++) {
-            const { x, y } = trailPositions[i];
-            const color = trailColors[i];
-            drawSquare(x, y, squareSize, color);
+            const { x, y } = trailPositions[i]; // Get position from array
+            const color = trailColors[i]; // Get color from array
+            drawSquare(x, y, squareSize, color); // Draw square at position with color
         }
 
+        // Request next animation frame to continue animation loop
         requestAnimationFrame(animate);
     }
 
+    // Start the animation loop
     animate();
 
-    // Function to pause/resume animation
+    // Function to pause/resume animation when canvas is clicked
     function toggleAnimation() {
-        isRunning = !isRunning;
+        isRunning = !isRunning; // Toggle animation state
         if (isRunning) {
-            animate();
+            animate(); // If animation is resumed, call animate function to continue animation loop
         }
     }
 
     // Event listener for click on canvas to toggle animation
     canvas.addEventListener('click', function() {
-        toggleAnimation();
+        toggleAnimation(); // When canvas is clicked, toggle animation state
     }, false);
 </script>
 
-
-    
 <canvas id="pixel_sort"></canvas>
 
 <script type="module">
