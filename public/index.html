@@ -10,12 +10,12 @@
         overflow: hidden;
     }
 
-    #colorSquare {
+/*     #colorSquare {
         width: 100px;
         height: 100px;
         background-color: red;
         position: absolute;
-    }
+    } */
 /*     #canvas {
         border: 1px solid black;
     } */
@@ -23,14 +23,14 @@
 </head>
 
 <body>
+    
 <canvas id="canvas"></canvas>
-
 <div id="colorSquare"></div>
-
+    
 <script type="module">
     // Get the canvas element and its 2D rendering context
     const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
+    // const ctx = canvas.getContext('2d');
 
     // Set canvas width and height to fill the window
     canvas.width = window.innerWidth;
@@ -38,8 +38,8 @@
 
     // Square properties
     let squareSize = 240; //Squares are 240 pixels big
-    let squareX = Math.random() * (canvas.width - squareSize); // Random initial x position
-    let squareY = Math.random() * (canvas.height - squareSize); // Random initial y position
+    let squareX = Math.random() * (canvas.width - squareSize); // Random starting x position
+    let squareY = Math.random() * (canvas.height - squareSize); // Random starting y position
     let dx = 8; // 4 times faster
     let dy = 8; // 4 times faster
 
@@ -47,7 +47,7 @@
     const colorChangeInterval = 4; // Colour changes every 4 frames
     let frameCount = 0;
 
-    // Arrays to store previous positions and colors for trail effect
+    // Array to store previous positions and colors for trail effect
     const trailPositions = [];
     const trailColors = [];
 
